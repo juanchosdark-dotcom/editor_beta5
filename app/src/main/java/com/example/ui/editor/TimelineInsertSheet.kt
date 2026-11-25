@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PictureInPictureAlt
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -84,8 +85,8 @@ import kotlinx.coroutines.delay
 import java.io.File
 
 /**
- * Playhead-anchored quick insertion sheet launched from timeline `+` buttons (track header or
- * end of clips) and from the quick dock (`+ Audio`, `+ Overlay`, `+ Efectos`).
+- Playhead-anchored quick insertion sheet launched from timeline `+` buttons (track header or
+- end of clips) and from the quick dock (`+ Audio`, `+ Overlay`, `+ Efectos`).
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -183,18 +184,21 @@ internal fun TimelineInsertSheet(
       TimelineInsertKind.AUDIO -> stringResource(R.string.insert_sheet_title_audio, timeLabel)
       TimelineInsertKind.OVERLAY -> stringResource(R.string.insert_sheet_title_overlay, timeLabel)
       TimelineInsertKind.EFFECTS -> stringResource(R.string.insert_sheet_title_effects, timeLabel)
+      TimelineInsertKind.TEXT -> "Texto / Subtítulos ($timeLabel)"
     }
   val headerIcon =
     when (request.kind) {
       TimelineInsertKind.AUDIO -> Icons.Default.LibraryMusic
       TimelineInsertKind.OVERLAY -> Icons.Default.Layers
       TimelineInsertKind.EFFECTS -> Icons.Default.AutoFixHigh
+      TimelineInsertKind.TEXT -> Icons.Default.TextFields
     }
   val accentColor =
     when (request.kind) {
       TimelineInsertKind.AUDIO -> MaterialTheme.colorScheme.secondary
       TimelineInsertKind.OVERLAY -> MaterialTheme.colorScheme.primary
       TimelineInsertKind.EFFECTS -> MaterialTheme.colorScheme.tertiary
+      TimelineInsertKind.TEXT -> MaterialTheme.colorScheme.primary
     }
 
   ModalBottomSheet(
@@ -607,157 +611,4 @@ internal fun TimelineInsertSheet(
                 modifier =
                   Modifier
                     .fillMaxWidth()
-                    .minimumInteractiveComponentSize()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                      onInsertAdjustmentEffect(preset.title, preset.config, preset.defaultDurationMs)
-                    }
-                    .testTag("effect_preset_${preset.id}"),
-              ) {
-                Row(
-                  modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                  Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                      text = preset.title,
-                      style = MaterialTheme.typography.labelLarge,
-                      fontWeight = FontWeight.SemiBold,
-                      maxLines = 1,
-                      overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                      text = preset.subtitle,
-                      style = MaterialTheme.typography.labelSmall,
-                      color = MaterialTheme.colorScheme.onSurfaceVariant,
-                      maxLines = 2,
-                      overflow = TextOverflow.Ellipsis,
-                    )
-                  }
-                  Spacer(Modifier.width(8.dp))
-                  Surface(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = RoundedCornerShape(6.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)),
-                  ) {
-                    Text(
-                      text = preset.tag,
-                      style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                      fontWeight = FontWeight.Bold,
-                      color = MaterialTheme.colorScheme.tertiary,
-                      modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
-                    )
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-@Composable
-private fun InsertOptionCard(
-  icon: ImageVector,
-  title: String,
-  subtitle: String,
-  accent: Color,
-  onClick: () -> Unit,
-  tag: String,
-) {
-  Surface(
-    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    shape = RoundedCornerShape(12.dp),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-    modifier =
-      Modifier
-        .fillMaxWidth()
-        .minimumInteractiveComponentSize()
-        .clip(RoundedCornerShape(12.dp))
-        .clickable(onClick = onClick)
-        .testTag(tag),
-  ) {
-    Row(
-      modifier = Modifier.padding(12.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-      Surface(
-        color = accent.copy(alpha = 0.16f),
-        shape = RoundedCornerShape(8.dp),
-      ) {
-        Icon(
-          imageVector = icon,
-          contentDescription = null,
-          tint = accent,
-          modifier = Modifier.padding(8.dp).size(20.dp),
-        )
-      }
-      Column(modifier = Modifier.weight(1f)) {
-        Text(
-          text = title,
-          style = MaterialTheme.typography.labelLarge,
-          fontWeight = FontWeight.SemiBold,
-        )
-        Text(
-          text = subtitle,
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun InsertCompactTile(
-  icon: ImageVector,
-  title: String,
-  subtitle: String,
-  accent: Color,
-  onClick: () -> Unit,
-  tag: String,
-  modifier: Modifier = Modifier,
-) {
-  Surface(
-    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    shape = RoundedCornerShape(12.dp),
-    border = BorderStroke(1.dp, accent.copy(alpha = 0.45f)),
-    modifier =
-      modifier
-        .minimumInteractiveComponentSize()
-        .clip(RoundedCornerShape(12.dp))
-        .clickable(onClick = onClick)
-        .testTag(tag),
-  ) {
-    Column(
-      modifier = Modifier.padding(12.dp),
-      verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-      Icon(
-        imageVector = icon,
-        contentDescription = null,
-        tint = accent,
-        modifier = Modifier.size(20.dp),
-      )
-      Spacer(Modifier.height(2.dp))
-      Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = FontWeight.SemiBold,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-      )
-      Text(
-        text = subtitle,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-      )
-    }
-  }
-}
+                    .
