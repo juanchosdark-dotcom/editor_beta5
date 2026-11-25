@@ -1,0 +1,6 @@
+{
+  "name": "FrameLine Studio",
+  "description": "Portable multitrack video editor with relative-path project files, non-destructive timeline editing, and modular media processing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
